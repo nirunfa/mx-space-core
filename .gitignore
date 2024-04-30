@@ -43,6 +43,9 @@ run
 data
 assets
 .env
+.env.local
+
+env.yaml
 
 scripts/workflow/docker-compose.yml
 scripts/workflow/data

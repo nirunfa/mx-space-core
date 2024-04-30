@@ -172,3 +172,12 @@ if (ENCRYPT.enable) {
       `你开启了 Key 加密（MX_ENCRYPT_KEY or --encrypt_key），但是 Key 的长度不为 64，当前：${ENCRYPT.key.length}`,
     )
 }
+
+export const qiniuConfig = {
+  accessKey: argv.QINIU_ACCESS_KEY || '',
+  secretKey: argv.QINIU_SECRET_KEY || '' ,
+  bucket: argv.QINIU_BUCKET || '',
+  domain: argv.QINIU_DOMAIN || '',
+  zone: argv.QINIU_ZONE || '',
+  useCdnDomain: parseBooleanishValue(argv.QINIU_USE_CDN_DOMAIN),
+};

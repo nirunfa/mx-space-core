@@ -120,6 +120,7 @@ import { RedisModule } from './processors/redis/redis.module'
     HelperModule,
 
     isDev && DebugModule,
+
   ].filter(Boolean) as Type<NestModule>[],
   controllers: [AppController],
   providers: [
