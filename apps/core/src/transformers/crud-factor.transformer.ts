@@ -25,6 +25,20 @@ import { MongoIdDto } from '~/shared/dto/id.dto'
 import { PagerDto } from '~/shared/dto/pager.dto'
 import { InjectModel } from '~/transformers/model.transformer'
 
+
+function isCamelCase(str) {
+  if (!/^[a-zA-Z][a-z]*$/g.test(str)) {
+    return false;
+  }
+  
+  if (str.includes('_') || str.includes(' ')) {
+    return false;
+  }
+
+  const words = str.split(/[A-Z]/);
+  return words.every(word => word.length > 2);
+}
+
 export type BaseCrudModuleType<T> = {
   _model: MongooseModel<T>
 }
@@ -33,7 +47,13 @@ export type ClassType<T> = new (...args: any[]) => T
 export function BaseCrudFactory<
   T extends AnyParamConstructor<BaseModel & { id: string }>,
 >({ model, classUpper }: { model: T; classUpper?: ClassType<any> }): Type<any> {
-  const prefix = model.name.toLowerCase().replace(/model$/, '')
+  const modelName= model.name;
+  const compareModelName = modelName.charAt(0).toLowerCase() + modelName.slice(1);
+  let prefix = compareModelName.toLowerCase().replace(/model$/, '')
+  //这里修改判断，如果模型名称符合骆驼命名法的法，则使用首字母小写的模型名称作为前缀
+  if(!isCamelCase(compareModelName.replace(/Model$/, ''))){
+    prefix = compareModelName.replace(/Model$/, '')
+  }
   const pluralizeName = pluralize(prefix) as string
 
   const eventNamePrefix = `${prefix.toUpperCase()}_`
@@ -44,6 +64,7 @@ export function BaseCrudFactory<
 
   const Upper = classUpper || class {}
 
+  console.log('pluralizeName:'+pluralizeName);
   @ApiController(pluralizeName)
   class BaseCrud extends Upper {
     constructor(

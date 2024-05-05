@@ -1,11 +1,15 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import { IsBoolean, IsOptional, IsString, IsUrl, isURL } from 'class-validator'
 
 import { modelOptions, prop } from '@typegoose/typegoose'
 
 import { BaseModel } from '~/shared/model/base.model'
 
+
 @modelOptions({
-  options: { customName: 'lovePhoto' },
+  options: {
+    customName: 'love_photo',
+  },
 })
 export class LovePhotoModel extends BaseModel {
   @prop({ required: true })
@@ -22,10 +26,20 @@ export class LovePhotoModel extends BaseModel {
   @IsOptional()
   colors: string
 
+  @prop({  })
+  @IsString()
+  @IsOptional()
+  timePrefix: string
+
   @prop({ required: true })
   @IsString()
   @IsOptional()
-  time: string
+  time: Date
+
+  @prop({  })
+  @IsString()
+  @IsOptional()
+  timeSuffix: string
 
   @prop({ required: true })
   @IsString()
@@ -36,5 +50,15 @@ export class LovePhotoModel extends BaseModel {
   @IsBoolean()
   @IsOptional()
   hasPhotos: boolean
-  
+
+  @prop({ })
+  @IsString()
+  @IsOptional()
+  music: string
+
+  @prop({ })
+  @IsString()
+  @IsOptional()
+  detailMap: string
+
 }

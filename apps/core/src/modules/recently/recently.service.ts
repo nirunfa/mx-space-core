@@ -125,7 +125,7 @@ export class RecentlyService {
     > = {
       [CollectionRefTypes.Post]: [],
       [CollectionRefTypes.Page]: [],
-      [CollectionRefTypes.Note]: [],
+      [CollectionRefTypes.Note]: []
     }
     for (const doc of result) {
       if (!doc.refType) {

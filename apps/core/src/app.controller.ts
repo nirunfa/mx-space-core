@@ -3,8 +3,11 @@ import dayjs from 'dayjs'
 import {
   BadRequestException,
   Get,
+  Header,
   HttpCode,
+  Param,
   Post,
+  Res,
   UseInterceptors,
 } from '@nestjs/common'
 
@@ -22,8 +25,9 @@ import { RedisKeys } from './constants/cache.constant'
 import { OptionModel } from './modules/configs/configs.model'
 import { CacheService } from './processors/redis/cache.service'
 import { getRedisKey } from './utils/redis.util'
+import { HttpService } from './processors/helper/helper.http.service'
 
-import qiniu from 'qiniu';
+import type { FastifyReply } from 'fastify'
 
 @ApiController()
 export class AppController {
@@ -31,6 +35,8 @@ export class AppController {
     private readonly cacheService: CacheService,
     @InjectModel(OptionModel)
     private readonly optionModel: MongooseModel<OptionModel>,
+
+    private readonly http: HttpService,
   ) {}
 
   @Get('/uptime')
@@ -62,33 +68,6 @@ export class AppController {
     return 'pong'
   }
 
-  @Get('/love')
-  @UseInterceptors(AllowAllCorsInterceptor)
-  async love() {
-    const mac = new qiniu.auth.digest.Mac(qiniuConfig.accessKey, qiniuConfig.secretKey);
-    const config = new qiniu.conf.Config();
-    // config.useHttpsDomain = false;
-    // config.regionsProvider = qiniu.httpc.Region.fromRegionId('z0');
-    const bucketManager = new qiniu.rs.BucketManager(mac, config);
-
-    const options = {
-      limit: 10,
-      prefix: 'love/',
-    };
-
-    let nextMarker = '';
-    return await new Promise((resolve, reject) => {
-      bucketManager.listPrefix(qiniuConfig.bucket, options,(err, result)=>{
-          resolve({err, result});
-      });
-    });
-  }
-  @Get('/loveDetail')
-  @UseInterceptors(AllowAllCorsInterceptor)
-  loveDetail(): 'pong' {
-    return 'pong'
-  }
-
   @Get('/experience')
   @UseInterceptors(AllowAllCorsInterceptor)
   async experience() {
@@ -110,6 +89,37 @@ export class AppController {
   @UseInterceptors(AllowAllCorsInterceptor)
   experienceDetail(): 'pong' {
     return 'pong'
+  }
+
+  @Get(['fileCdn/:base64Str','File/show/key/:base64Str'])
+  @UseInterceptors(AllowAllCorsInterceptor)
+  //({ passthrough: true })
+  async showCdnFile(@Param() param,@Res() res : FastifyReply) {
+    const { base64Str } = param
+
+    const filePath = Buffer.from(base64Str, 'base64').toString('utf-8')
+    const cdnImgPath = qiniuConfig.domain+"/"+filePath;
+    console.log(cdnImgPath)
+
+    try {
+      const response = await this.http.axiosRef
+          .get(cdnImgPath, {
+            timeout: 8000,
+            'axios-retry': {
+              retries: 1,
+              shouldResetTimeout: true,
+            },
+            responseType: 'arraybuffer'
+          })
+
+      // 设置响应头
+      res.header('Content-Type', response.headers['content-type']);
+      res.header('Content-Disposition', response.headers['content-disposition']);
+
+      res.send(response.data)
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/like_this')

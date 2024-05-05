@@ -22,6 +22,7 @@ import { UserModel } from '~/modules/user/user.model'
 import { WebhookEventModel } from '~/modules/webhook/webhook-event.model'
 import { WebhookModel } from '~/modules/webhook/webhook.model'
 import { getProviderByTypegooseClass } from '~/transformers/model.transformer'
+import { LovePhotoModel } from '~/modules/love-photo/love-photo.model'
 
 export const databaseModels = [
   AISummaryModel,
@@ -47,4 +48,6 @@ export const databaseModels = [
   UserModel,
   WebhookEventModel,
   WebhookModel,
+
+  LovePhotoModel
 ].map((model) => getProviderByTypegooseClass(model))

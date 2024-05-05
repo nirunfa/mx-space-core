@@ -13,4 +13,7 @@ export class LovePhotoService {
   public get model() {
     return this.lovePhotoModel
   }
+
+  
+
 }

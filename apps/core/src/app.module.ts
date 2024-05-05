@@ -66,6 +66,7 @@ import { DatabaseModule } from './processors/database/database.module'
 import { GatewayModule } from './processors/gateway/gateway.module'
 import { HelperModule } from './processors/helper/helper.module'
 import { RedisModule } from './processors/redis/redis.module'
+import { LovePhotoModule } from './modules/love-photo/love-photo.module';
 
 @Module({
   imports: [
@@ -110,6 +111,7 @@ import { RedisModule } from './processors/redis/redis.module'
     TopicModule,
     UpdateModule,
     UserModule,
+    LovePhotoModule,
     WebhookModule,
 
     PageProxyModule,
