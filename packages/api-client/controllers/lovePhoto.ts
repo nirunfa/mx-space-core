@@ -1,7 +1,7 @@
 import type { IRequestAdapter } from '~/interfaces/adapter'
 import type { IController } from '~/interfaces/controller'
 import type { IRequestHandler } from '~/interfaces/request'
-import type { LovePhotoModel } from '~/models/lovePhotos'
+import type { LovePhotoModel } from '~/models/lovePhoto'
 import type { HTTPClient } from '../core'
 
 import { autoBind } from '~/utils/auto-bind'
@@ -21,8 +21,8 @@ export class LovePhotoController<ResponseWrapper>
   extends BaseCrudController<LovePhotoModel, ResponseWrapper>
   implements IController
 {
-  base = 'love-photos'
-  name = 'love-photos'
+  base = 'lovePhotos'
+  name = 'lovePhoto'
 
   constructor(protected client: HTTPClient) {
     super(client)

@@ -21,6 +21,7 @@ import { SnippetController } from './snippet'
 import { SubscribeController } from './subscribe'
 import { TopicController } from './topic'
 import { UserController } from './user'
+import { LovePhotoController } from './lovePhoto'
 
 export const allControllers = [
   AIController,
@@ -42,6 +43,7 @@ export const allControllers = [
   ServerlessController,
   SubscribeController,
   UserController,
+  LovePhotoController
 ]
 
 export const allControllerNames = [
@@ -69,6 +71,8 @@ export const allControllerNames = [
   'friend',
   'master',
   'shorthand',
+
+  'lovePhoto'
 ] as const
 
 export {
@@ -95,4 +99,6 @@ export {
   // Enum
   RecentlyAttitudeEnum,
   RecentlyAttitudeResultEnum,
+
+  LovePhotoController
 }
