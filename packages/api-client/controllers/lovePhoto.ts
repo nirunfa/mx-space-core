@@ -19,8 +19,7 @@ declare module '../core/client' {
 
 export class LovePhotoController<ResponseWrapper>
   extends BaseCrudController<LovePhotoModel, ResponseWrapper>
-  implements IController
-{
+  implements IController {
   base = 'lovePhotos'
   name = 'lovePhoto'
 
@@ -33,10 +32,4 @@ export class LovePhotoController<ResponseWrapper>
     return this.client.proxy(this.base)
   }
 
-  /**
-   * 获取随机一条
-   */
-  getRandom() {
-    return this.proxy.random.get<{ data: LovePhotoModel | null }>()
-  }
 }

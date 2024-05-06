@@ -72,7 +72,7 @@ export const allControllerNames = [
   'master',
   'shorthand',
 
-  'lovePhoto'
+  'LovePhoto'
 ] as const
 
 export {
