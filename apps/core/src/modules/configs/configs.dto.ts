@@ -3,8 +3,8 @@ import {
   ArrayUnique,
   IsBoolean,
   IsEmail,
-  IsInt,
   IsIP,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -15,9 +15,9 @@ import { JSONSchema } from 'class-validator-jsonschema'
 
 import { IsAllowedUrl } from '~/decorators/dto/isAllowedUrl'
 
+import { OpenAiSupportedModels } from '../ai/ai.constants'
 import { Encrypt } from './configs.encrypt.util'
 import {
-  halfFieldOption,
   JSONSchemaArrayField,
   JSONSchemaHalfGirdPlainField,
   JSONSchemaNumberField,
@@ -25,7 +25,9 @@ import {
   JSONSchemaPlainField,
   JSONSchemaTextAreaField,
   JSONSchemaToggleField,
+  halfFieldOption,
 } from './configs.jsonschema.decorator'
+import type { ChatModel } from 'openai/resources'
 
 const SecretField = (target: Object, propertyKey: string | symbol) => {
   Encrypt(target, propertyKey)
@@ -77,7 +79,7 @@ export class UrlDto {
 
 class MailOption {
   @IsInt()
-  @Transform(({ value: val }) => parseInt(val))
+  @Transform(({ value: val }) => Number.parseInt(val))
   @IsOptional()
   @JSONSchemaNumberField('发件邮箱端口', halfFieldOption)
   port: number
@@ -159,7 +161,7 @@ export class BackupOptionsDto {
   @IsBoolean()
   @IsOptional()
   @JSONSchemaToggleField('开启自动备份', {
-    description: '填写以下 COS 信息，将同时上传备份到 COS',
+    description: '填写以下 S3 信息，将同时上传备份到 S3',
   })
   enable: boolean
 
@@ -245,11 +247,6 @@ export class AdminExtraDto {
   @IsOptional()
   @JSONSchemaPlainField('登录页面背景')
   background?: string
-
-  @IsString()
-  @IsOptional()
-  @JSONSchemaPlainField('中后台标题')
-  title?: string
 
   @IsString()
   @IsOptional()
@@ -368,6 +365,27 @@ export class AuthSecurityDto {
 }
 @JSONSchema({ title: 'AI 设定' })
 export class AIDto {
+  @IsOptional()
+  @JSONSchemaPasswordField('OpenAI Key')
+  @IsString()
+  @SecretField
+  openAiKey: string
+
+  @IsOptional()
+  @IsString()
+  @JSONSchemaPlainField('OpenAI Endpoint')
+  openAiEndpoint: string
+
+  @IsOptional()
+  @IsString()
+  @JSONSchemaPlainField('OpenAI 默认模型', {
+    'ui:options': {
+      type: 'select',
+      values: OpenAiSupportedModels,
+    },
+  })
+  openAiPreferredModel: ChatModel
+
   @IsBoolean()
   @IsOptional()
   @JSONSchemaToggleField('可调用 AI 摘要', {
@@ -382,15 +400,4 @@ export class AIDto {
       '此选项开启后，将会在文章发布后自动生成摘要，需要开启上面的选项，否则无效',
   })
   enableAutoGenerateSummary: boolean
-
-  @IsOptional()
-  @JSONSchemaPasswordField('OpenAI Key')
-  @IsString()
-  @SecretField
-  openAiKey: string
-
-  @IsOptional()
-  @IsString()
-  @JSONSchemaPlainField('OpenAI Endpoint')
-  openAiEndpoint: string
 }
