@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
-import { readFileSync } from 'fs'
-import path from 'path'
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import { program } from 'commander'
 import { load as yamlLoad } from 'js-yaml'
 import { machineIdSync } from 'node-machine-id'
-import type { AxiosRequestConfig } from 'axios'
 
+import { seconds } from '@nestjs/throttler'
 import { isDebugMode, isDev } from './global/env.global'
 import { parseBooleanishValue } from './utils'
+import type { AxiosRequestConfig } from 'axios'
 
 const commander = program
   .option('-p, --port <number>', 'server port')
@@ -63,6 +63,9 @@ const commander = program
     '--encrypt_algorithm <string>',
     'custom encrypt algorithm, default is aes-256-ecb',
   )
+  // throttle
+  .option('--throttle_ttl <number>', 'throttle ttl')
+  .option('--throttle_limit <number>', 'throttle limit')
 
   // other
   .option('--color', 'force enable shell color')
@@ -158,6 +161,10 @@ export const DEBUG_MODE = {
   httpRequestVerbose:
     argv.httpRequestVerbose ?? argv.http_request_verbose ?? true,
 }
+export const THROTTLE_OPTIONS = {
+  ttl: seconds(argv.throttle_ttl ?? 10),
+  limit: argv.throttle_limit ?? 10,
+}
 
 const ENCRYPT_KEY = argv.encrypt_key || MX_ENCRYPT_KEY
 export const ENCRYPT = {
@@ -166,12 +173,10 @@ export const ENCRYPT = {
   algorithm: argv.encrypt_algorithm || 'aes-256-ecb',
 }
 
-if (ENCRYPT.enable) {
-  if (!ENCRYPT.key || ENCRYPT.key.length !== 64)
-    throw new Error(
-      `你开启了 Key 加密（MX_ENCRYPT_KEY or --encrypt_key），但是 Key 的长度不为 64，当前：${ENCRYPT.key.length}`,
-    )
-}
+if (ENCRYPT.enable && (!ENCRYPT.key || ENCRYPT.key.length !== 64))
+  throw new Error(
+    `你开启了 Key 加密（MX_ENCRYPT_KEY or --encrypt_key），但是 Key 的长度不为 64，当前：${ENCRYPT.key.length}`,
+  )
 
 export const qiniuConfig = {
   accessKey: argv.QINIU_ACCESS_KEY || '',

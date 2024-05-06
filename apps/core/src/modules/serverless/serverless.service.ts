@@ -1,17 +1,11 @@
-import fs, { mkdir, stat } from 'fs/promises'
-import { createRequire } from 'module'
-import path, { resolve } from 'path'
+import fs, { mkdir, stat } from 'node:fs/promises'
+import { createRequire } from 'node:module'
+import path, { resolve } from 'node:path'
 import { isURL } from 'class-validator'
 import { isPlainObject } from 'lodash'
 import { LRUCache } from 'lru-cache'
 import { mongo } from 'mongoose'
 import qs from 'qs'
-import type { OnModuleInit } from '@nestjs/common'
-import type {
-  BuiltInFunctionObject,
-  FunctionContextRequest,
-  FunctionContextResponse,
-} from './function.types'
 
 import { parseAsync, transformAsync } from '@babel/core'
 import * as t from '@babel/types'
@@ -50,6 +44,12 @@ import { SnippetModel, SnippetType } from '../snippet/snippet.model'
 import { allBuiltInSnippetPack as builtInSnippets } from './pack'
 import { ServerlessStorageCollectionName } from './serverless.model'
 import { complieTypeScriptBabelOptions, hashStable } from './serverless.util'
+import type {
+  BuiltInFunctionObject,
+  FunctionContextRequest,
+  FunctionContextResponse,
+} from './function.types'
+import type { OnModuleInit } from '@nestjs/common'
 
 type ScopeContext = {
   req: FunctionContextRequest
@@ -339,12 +339,12 @@ export class ServerlessService implements OnModuleInit {
           exports: {},
         },
       },
-    ).catch((err) => {
-      logger.error(err)
+    ).catch((error) => {
+      logger.error(error)
       return Promise.reject(
         new BizException(
           ErrorCodeEnum.ServerlessError,
-          err.message || 'Unknown error, please check log',
+          error.message || 'Unknown error, please check log',
         ),
       )
     })
@@ -383,7 +383,7 @@ export class ServerlessService implements OnModuleInit {
           text = useCache
             ? await this.httpService.getAndCacheRequest(id)
             : await this.httpService.axiosRef.get(id).then((res) => res.data)
-        } catch (err) {
+        } catch {
           throw new InternalServerErrorException(
             'Failed to fetch remote module',
           )
@@ -450,6 +450,10 @@ export class ServerlessService implements OnModuleInit {
         'vm',
       ]
 
+      for (const lib of [...bannedLibs]) {
+        bannedLibs.push(`node:${lib}`)
+      }
+
       if (bannedLibs.includes(id)) {
         throw new Error(`cannot require ${id}`)
       }
@@ -500,8 +504,6 @@ export class ServerlessService implements OnModuleInit {
         context: { ...context.context, ...requestContext },
       })
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
 
     const require = this.createNewContextRequire()
 
@@ -595,11 +597,11 @@ export class ServerlessService implements OnModuleInit {
       )
 
       return hasEntryFunction
-    } catch (e) {
+    } catch (error) {
       if (isDev) {
-        console.error(e.message)
+        console.error(error.message)
       }
-      return e.message?.split('\n').at(0)
+      return error.message?.split('\n').at(0)
     }
 
     function isHandlerFunction(

@@ -1,6 +1,5 @@
-import type { Socket } from 'socket.io'
-
 import { BusinessEvents } from '~/constants/business-event.constant'
+import type { Socket } from 'socket.io'
 
 export abstract class BaseGateway {
   public gatewayMessageFormat(
@@ -31,8 +30,9 @@ export abstract class BaseGateway {
       ),
     )
   }
-}
 
-export abstract class BroadcastBaseGateway extends BaseGateway {
+  // eslint-disable-next-line unused-imports/no-unused-vars
   broadcast(event: BusinessEvents, data: any) {}
 }
+
+export abstract class BroadcastBaseGateway extends BaseGateway {}

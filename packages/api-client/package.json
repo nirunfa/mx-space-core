@@ -1,6 +1,6 @@
 {
   "name": "@mx-space/api-client",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "type": "module",
   "description": "A api client for mx-space server@next",
   "author": "Innei",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@types/cors": "2.8.17",
     "@types/express": "4.17.21",
-    "@types/lodash": "4.17.0",
+    "@types/lodash": "4.17.1",
     "abort-controller": "3.0.0",
     "axios": "^1.6.7",
     "camelcase-keys": "^9.1.3",

@@ -1,6 +1,5 @@
-import type { IConfig } from './configs.interface'
-
 import { DEMO_MODE } from '~/app.config'
+import type { IConfig } from './configs.interface'
 
 export const generateDefaultConfig: () => IConfig = () => ({
   seo: {
@@ -53,7 +52,7 @@ export const generateDefaultConfig: () => IConfig = () => ({
   algoliaSearchOptions: { enable: false, apiKey: '', appId: '', indexName: '' },
   adminExtra: {
     enableAdminProxy: true,
-    title: 'おかえり~',
+
     background: '',
     gaodemapKey: null!,
   },
@@ -79,6 +78,7 @@ export const generateDefaultConfig: () => IConfig = () => ({
     enableAutoGenerateSummary: false,
     enableSummary: false,
     openAiEndpoint: '',
+    openAiPreferredModel: 'gpt-3.5-turbo',
     openAiKey: '',
   },
 })

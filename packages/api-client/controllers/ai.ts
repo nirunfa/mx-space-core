@@ -1,10 +1,9 @@
+import { autoBind } from '~/utils/auto-bind'
 import type { IRequestAdapter } from '~/interfaces/adapter'
 import type { IController } from '~/interfaces/controller'
 import type { IRequestHandler } from '~/interfaces/request'
 import type { HTTPClient } from '../core'
 import type { AISummaryModel } from '../models/ai'
-
-import { autoBind } from '~/utils/auto-bind'
 
 declare module '../core/client' {
   interface HTTPClient<
@@ -48,7 +47,7 @@ export class AIController<ResponseWrapper> implements IController {
   }
 
   async generateSummary(articleId: string, lang = 'zh-CN', token = '') {
-    return this.proxy('generate-summary').post<AISummaryModel>({
+    return this.proxy.summaries.generate.post<AISummaryModel>({
       params: {
         token,
       },
