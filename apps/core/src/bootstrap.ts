@@ -1,6 +1,6 @@
 import cluster from 'node:cluster'
 import { performance } from 'node:perf_hooks'
-import { Logger } from 'nestjs-pretty-logger'
+import { Logger } from '@innei/pretty-logger-nestjs'
 import wcmatch from 'wildcard-match'
 
 import { NestFactory } from '@nestjs/core'
@@ -62,6 +62,8 @@ export async function bootstrap() {
               callback(null, allow)
             },
             credentials: true,
+            preflightContinue: false,
+            optionsSuccessStatus: 204,
           }
         : undefined,
   )
