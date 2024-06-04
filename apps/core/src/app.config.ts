@@ -24,6 +24,7 @@ const commander = program
   .option('--db_port <number>', 'mongodb database port')
   .option('--db_user <string>', 'mongodb database user')
   .option('--db_password <string>', 'mongodb database password')
+  .option('--db_options <string>', 'mongodb database options')
   .option('--db_connection_string <string>', 'mongodb connection string')
   // redis
   .option('--redis_host <string>', 'redis host')
@@ -69,6 +70,12 @@ const commander = program
 
   // other
   .option('--color', 'force enable shell color')
+
+  // debug
+  .option(
+    '--debug_memory_dump',
+    'enable memory dump for debug, send SIGUSR2 to dump memory',
+  )
 
 commander.parse()
 
@@ -116,10 +123,12 @@ export const MONGO_DB = {
   port: argv.db_port || 27017,
   user: argv.db_user || '',
   password: argv.db_password || '',
+  options: argv.db_options || '',
   get uri() {
     const userPassword =
       this.user && this.password ? `${this.user}:${this.password}@` : ''
-    return `mongodb://${userPassword}${this.host}:${this.port}/${this.dbName}`
+    const dbOptions = this.options ? `?${this.options}` : ''
+    return `mongodb://${userPassword}${this.host}:${this.port}/${this.dbName}${dbOptions}`
   },
   customConnectionString: argv.db_connection_string,
 }
@@ -160,10 +169,12 @@ export const DEBUG_MODE = {
   logging: isDebugMode,
   httpRequestVerbose:
     argv.httpRequestVerbose ?? argv.http_request_verbose ?? true,
+  memoryDump:
+    (argv.debug_memory_dump || process.env.MX_DEBUG_MEMORY_DUMP) ?? false,
 }
 export const THROTTLE_OPTIONS = {
   ttl: seconds(argv.throttle_ttl ?? 10),
-  limit: argv.throttle_limit ?? 10,
+  limit: argv.throttle_limit ?? 100,
 }
 
 const ENCRYPT_KEY = argv.encrypt_key || MX_ENCRYPT_KEY
