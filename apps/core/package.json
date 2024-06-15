@@ -1,6 +1,6 @@
 {
   "name": "@mx-space/core",
-  "version": "5.8.3",
+  "version": "5.8.4",
   "author": "Innei <https://innei.in>",
   "private": true,
   "license": "AGPLv3",
@@ -115,7 +115,7 @@
     "@innei/pretty-logger-nestjs": "0.3.2",
     "node-machine-id": "1.1.12",
     "nodemailer": "6.9.13",
-    "openai": "4.49.1",
+    "openai": "4.51.0",
     "pluralize": "^8.0.0",
     "qiniu": "^7.11.1",
     "qs": "6.12.1",
